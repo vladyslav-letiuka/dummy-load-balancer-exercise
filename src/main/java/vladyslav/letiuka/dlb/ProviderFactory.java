@@ -1,6 +1,6 @@
 package vladyslav.letiuka.dlb;
 
-import vladyslav.letiuka.dlb.loadbalancer.RegisteredProviderWrapper;
+import vladyslav.letiuka.dlb.loadbalancer.RegisteredProvider;
 import vladyslav.letiuka.dlb.provider.ConstantDelayProviderDecorator;
 import vladyslav.letiuka.dlb.provider.LimitedCapacityProviderDecorator;
 import vladyslav.letiuka.dlb.provider.Provider;
@@ -19,8 +19,12 @@ public class ProviderFactory {
         return provider;
     }
 
-    public RegisteredProviderWrapper registerProvider(Provider provider, String name) {
-        return new RegisteredProviderWrapper(provider, name);
+    public RegisteredProvider registerProvider(Provider provider) {
+        return new RegisteredProvider(provider, "anonymous");
+    }
+
+    public RegisteredProvider registerProvider(Provider provider, String name) {
+        return new RegisteredProvider(provider, name);
     }
 
 }

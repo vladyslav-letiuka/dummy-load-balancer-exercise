@@ -3,7 +3,6 @@ package vladyslav.letiuka.dlb.loadbalancer;
 import vladyslav.letiuka.dlb.exception.LoadBalancerException;
 import vladyslav.letiuka.dlb.exception.ProviderException;
 import vladyslav.letiuka.dlb.exception.RequestRejectedException;
-import vladyslav.letiuka.dlb.provider.Provider;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,16 +11,16 @@ import java.util.List;
 
 public class RandomLoadBalancer extends ExclusionLoadBalancer {
 
-    public RandomLoadBalancer(Collection<RegisteredProviderWrapper> providers) {
+    public RandomLoadBalancer(Collection<RegisteredProvider> providers) {
         super(providers);
     }
 
     @Override
     public String get() throws LoadBalancerException {
-        List<RegisteredProviderWrapper> prioritizedProviders = new ArrayList<>(providers);
+        List<RegisteredProvider> prioritizedProviders = new ArrayList<>(providers);
         Collections.shuffle(prioritizedProviders);
 
-        for (RegisteredProviderWrapper provider : prioritizedProviders) {
+        for (RegisteredProvider provider : prioritizedProviders) {
             try {
                 return provider.get();
             } catch (ProviderException e) {

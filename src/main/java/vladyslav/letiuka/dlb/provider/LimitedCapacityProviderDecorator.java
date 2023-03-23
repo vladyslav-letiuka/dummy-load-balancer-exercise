@@ -22,6 +22,7 @@ public class LimitedCapacityProviderDecorator implements Provider {
             System.out.println("Trying to acquire semaphore lock...");
             acquired = semaphore.tryAcquire();
             if (!acquired) {
+                System.out.println("Failed to acquire semaphore lock...");
                 throw new ProviderAtCapacityException();
             }
             return delegate.get();

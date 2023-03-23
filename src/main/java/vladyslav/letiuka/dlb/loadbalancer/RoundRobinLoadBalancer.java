@@ -19,15 +19,17 @@ public class RoundRobinLoadBalancer extends ExclusionLoadBalancer {
 
     private final AtomicInteger indexCounter;
     private final boolean deterministic;
+    private volatile short retries;
 
-    public RoundRobinLoadBalancer(Collection<RegisteredProviderWrapper> providers) {
+    public RoundRobinLoadBalancer(Collection<RegisteredProvider> providers) {
         this(providers, false);
     }
 
-    public RoundRobinLoadBalancer(Collection<RegisteredProviderWrapper> providers, boolean deterministic) {
+    public RoundRobinLoadBalancer(Collection<RegisteredProvider> providers, boolean deterministic) {
         super(providers);
         indexCounter = new AtomicInteger(0);
         this.deterministic = deterministic;
+        retries = 20;
     }
 
     @Override
@@ -40,10 +42,14 @@ public class RoundRobinLoadBalancer extends ExclusionLoadBalancer {
         return getRandom(); // fallback strategy
     }
 
+    public void setRetries(short retries) {
+        this.retries = retries;
+    }
+
     private String getRoundRobin() throws LoadBalancerException {
 
-        for (int i = 0; i < ROUND_ROBIN_RETRIES; ++i) {
-            RegisteredProviderWrapper provider = getNextProvider();
+        for (int i = 0; i < retries; ++i) {
+            RegisteredProvider provider = getNextProvider();
             try {
                 return provider.get();
             } catch (ProviderException e) {
@@ -56,7 +62,7 @@ public class RoundRobinLoadBalancer extends ExclusionLoadBalancer {
 
     private String getRandom() throws LoadBalancerException {
 
-        List<RegisteredProviderWrapper> prioritizedProviders;
+        List<RegisteredProvider> prioritizedProviders;
         if (deterministic) {
             prioritizedProviders = providers;
         } else {
@@ -64,7 +70,7 @@ public class RoundRobinLoadBalancer extends ExclusionLoadBalancer {
             Collections.shuffle(prioritizedProviders);
         }
 
-        for (RegisteredProviderWrapper provider : prioritizedProviders) {
+        for (RegisteredProvider provider : prioritizedProviders) {
             try {
                 return provider.get();
             } catch (ProviderException e) {
@@ -76,7 +82,7 @@ public class RoundRobinLoadBalancer extends ExclusionLoadBalancer {
     }
 
 
-    private RegisteredProviderWrapper getNextProvider() {
+    private RegisteredProvider getNextProvider() {
         int counterValue = indexCounter.getAndIncrement();
         if (counterValue >= RESET_THRESHOLD) {
             resetIndexCounter();

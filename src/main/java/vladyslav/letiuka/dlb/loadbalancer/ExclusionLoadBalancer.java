@@ -12,9 +12,9 @@ public abstract class ExclusionLoadBalancer implements LoadBalancer {
 
     private static final int MAX_PROVIDERS_SUPPORTED = 10;
 
-    protected final List<RegisteredProviderWrapper> providers;
+    protected final List<RegisteredProvider> providers;
 
-    public ExclusionLoadBalancer(Collection<RegisteredProviderWrapper> providers) {
+    public ExclusionLoadBalancer(Collection<RegisteredProvider> providers) {
         if (providers.size() > MAX_PROVIDERS_SUPPORTED) {
             throw new IllegalArgumentException();
         }
@@ -41,7 +41,7 @@ public abstract class ExclusionLoadBalancer implements LoadBalancer {
                 .forEach(provider -> setProviderStatus(provider, included));
     }
 
-    private void setProviderStatus(RegisteredProviderWrapper provider, boolean included) {
+    private void setProviderStatus(RegisteredProvider provider, boolean included) {
         if (included) {
             provider.include();
         } else {
@@ -50,7 +50,7 @@ public abstract class ExclusionLoadBalancer implements LoadBalancer {
     }
 
     private void healthPing() {
-        providers.forEach(RegisteredProviderWrapper::ping);
+        providers.forEach(RegisteredProvider::ping);
     }
 
     private static void healthPingFromWeakRef(WeakReference<ExclusionLoadBalancer> weakRef, ExecutorService executor) {

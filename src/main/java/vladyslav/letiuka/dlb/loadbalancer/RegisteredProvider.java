@@ -3,7 +3,7 @@ package vladyslav.letiuka.dlb.loadbalancer;
 import vladyslav.letiuka.dlb.exception.ProviderException;
 import vladyslav.letiuka.dlb.provider.Provider;
 
-public class RegisteredProviderWrapper {
+public class RegisteredProvider {
 
     private static final int SUCCESSFUL_CHECK_STREAK_THRESHOLD = 2;
 
@@ -13,7 +13,7 @@ public class RegisteredProviderWrapper {
     private volatile boolean autoExcluded;
     private volatile int successfulCheckStreak;
 
-    public RegisteredProviderWrapper(Provider delegate, String name) {
+    public RegisteredProvider(Provider delegate, String name) {
         if (delegate == null) {
             throw new IllegalArgumentException();
         }
