@@ -31,7 +31,7 @@ public final class TestLoadBalancerFactory {
     public static List<RegisteredProvider> buildFastProviders(int count) {
         return IntStream.range(0, count)
                 .mapToObj(id -> new RegisteredProvider(
-                        new StaticToggledProvider("output" + id), "name" + id))
+                        new StaticToggledProvider("#" + id), "name" + id))
                 .collect(Collectors.toList());
     }
 
@@ -39,7 +39,7 @@ public final class TestLoadBalancerFactory {
         return IntStream.range(0, count)
                 .mapToObj(id -> new RegisteredProvider(
                         new ConstantDelayProviderDecorator(
-                                new StaticToggledProvider("output" + id), 500),
+                                new StaticToggledProvider("#" + id), 500),
                         "name" + id))
                 .collect(Collectors.toList());
     }
