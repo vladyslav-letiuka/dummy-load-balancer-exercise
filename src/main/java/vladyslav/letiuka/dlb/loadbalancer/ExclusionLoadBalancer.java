@@ -1,16 +1,17 @@
 package vladyslav.letiuka.dlb.loadbalancer;
 
+import java.lang.ref.Cleaner;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public abstract class ExclusionLoadBalancer implements LoadBalancer {
 
     private static final int MAX_PROVIDERS_SUPPORTED = 10;
+    private static final Cleaner cleaner = Cleaner.create();
 
     protected final List<RegisteredProvider> providers;
 
@@ -22,9 +23,12 @@ public abstract class ExclusionLoadBalancer implements LoadBalancer {
 
         WeakReference<ExclusionLoadBalancer> weakThis = new WeakReference<>(this);
 
-        ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
-        scheduledExecutorService.scheduleAtFixedRate(() -> healthPingFromWeakRef(weakThis, scheduledExecutorService),
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        scheduledExecutorService.scheduleAtFixedRate(
+                () -> healthPingFromWeakRef(weakThis),
                 2000, 2000, TimeUnit.MILLISECONDS);
+        cleaner.register(this, scheduledExecutorService::shutdown); // shutdown scheduled pings when GCed
+
     }
 
     public void includeProviders(String name) {
@@ -53,11 +57,9 @@ public abstract class ExclusionLoadBalancer implements LoadBalancer {
         providers.forEach(RegisteredProvider::ping);
     }
 
-    private static void healthPingFromWeakRef(WeakReference<ExclusionLoadBalancer> weakRef, ExecutorService executor) {
+    private static void healthPingFromWeakRef(WeakReference<ExclusionLoadBalancer> weakRef) {
         ExclusionLoadBalancer balancer = weakRef.get();
-        if (balancer == null) {
-            executor.shutdown();
-        } else {
+        if (balancer != null) {
             balancer.healthPing();
         }
     }
