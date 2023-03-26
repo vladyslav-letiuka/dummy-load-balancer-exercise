@@ -23,7 +23,8 @@ public class RoundRobinTest extends TrafficBaseTest {
         RegisteredProvider wrapper2 = factory.registerProvider(provider2, "second");
         RegisteredProvider wrapper1 = factory.registerProvider(provider1);
 
-        RoundRobinLoadBalancer loadBalancer = new RoundRobinLoadBalancer(Arrays.asList(wrapper1, wrapper2, wrapper3), true);
+        RoundRobinLoadBalancer loadBalancer = new RoundRobinLoadBalancer(Arrays.asList(wrapper1, wrapper2, wrapper3),
+                1000, true);
 
         Future<String> f1 = executorService.submit(loadBalancer::get);
         Thread.sleep(10);

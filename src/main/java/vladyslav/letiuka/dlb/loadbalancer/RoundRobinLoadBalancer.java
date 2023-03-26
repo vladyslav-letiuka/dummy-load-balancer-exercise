@@ -1,8 +1,8 @@
 package vladyslav.letiuka.dlb.loadbalancer;
 
 import vladyslav.letiuka.dlb.exception.balancer.LoadBalancerException;
-import vladyslav.letiuka.dlb.exception.provider.ProviderException;
 import vladyslav.letiuka.dlb.exception.balancer.RequestRejectedException;
+import vladyslav.letiuka.dlb.exception.provider.ProviderException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,17 +19,15 @@ public class RoundRobinLoadBalancer extends ExclusionLoadBalancer {
     private final boolean deterministic;
     private volatile short retries;
 
-    public RoundRobinLoadBalancer(Collection<RegisteredProvider> providers, boolean deterministic) {
-        super(providers);
-        indexCounter = new AtomicInteger(0);
-        this.deterministic = deterministic;
-        retries = 20;
-    }
     public RoundRobinLoadBalancer(Collection<RegisteredProvider> providers) {
-        this(providers, false);
+        this(providers, 1000);
     }
 
-    public RoundRobinLoadBalancer(Collection<RegisteredProvider> providers, boolean deterministic, int millisBetweenPings) {
+    public RoundRobinLoadBalancer(Collection<RegisteredProvider> providers, int millisBetweenPings) {
+        this(providers, millisBetweenPings, false);
+    }
+
+    public RoundRobinLoadBalancer(Collection<RegisteredProvider> providers, int millisBetweenPings, boolean deterministic) {
         super(providers, millisBetweenPings);
         indexCounter = new AtomicInteger(0);
         this.deterministic = deterministic;

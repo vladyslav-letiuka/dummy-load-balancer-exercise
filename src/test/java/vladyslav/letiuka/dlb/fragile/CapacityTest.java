@@ -23,7 +23,8 @@ public class CapacityTest extends TrafficBaseTest {
         Provider provider = factory.buildProvider("single", null, 0);
         RegisteredProvider wrapper = factory.registerProvider(provider);
 
-        LoadBalancer loadBalancer = new RoundRobinLoadBalancer(Collections.singletonList(wrapper), true);
+        LoadBalancer loadBalancer = new RoundRobinLoadBalancer(Collections.singletonList(wrapper),
+                1000, true);
 
         try {
             executorService.submit(loadBalancer::get).get();
@@ -39,7 +40,8 @@ public class CapacityTest extends TrafficBaseTest {
         Provider provider = factory.buildProvider("single", 100, 3);
         RegisteredProvider wrapper = factory.registerProvider(provider);
 
-        RoundRobinLoadBalancer loadBalancer = new RoundRobinLoadBalancer(Collections.singletonList(wrapper), true);
+        RoundRobinLoadBalancer loadBalancer = new RoundRobinLoadBalancer(Collections.singletonList(wrapper),
+                1000, true);
 
         Future<String> f1 = executorService.submit(loadBalancer::get);
         Thread.sleep(10);
@@ -72,7 +74,8 @@ public class CapacityTest extends TrafficBaseTest {
         RegisteredProvider wrapper1 = factory.registerProvider(provider1);
         RegisteredProvider wrapper2 = factory.registerProvider(provider2);
 
-        RoundRobinLoadBalancer loadBalancer = new RoundRobinLoadBalancer(Arrays.asList(wrapper1, wrapper2), true);
+        RoundRobinLoadBalancer loadBalancer = new RoundRobinLoadBalancer(Arrays.asList(wrapper1, wrapper2),
+                1000, true);
 
         Future<String> f1 = executorService.submit(loadBalancer::get);
         Thread.sleep(10);

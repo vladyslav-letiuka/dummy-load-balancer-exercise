@@ -1,8 +1,8 @@
 package vladyslav.letiuka.dlb.loadbalancer;
 
 import vladyslav.letiuka.dlb.exception.balancer.LoadBalancerException;
-import vladyslav.letiuka.dlb.exception.provider.ProviderException;
 import vladyslav.letiuka.dlb.exception.balancer.RequestRejectedException;
+import vladyslav.letiuka.dlb.exception.provider.ProviderException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +12,11 @@ import java.util.List;
 public class RandomLoadBalancer extends ExclusionLoadBalancer {
 
     public RandomLoadBalancer(Collection<RegisteredProvider> providers) {
-        super(providers);
+        this(providers, 1000);
+    }
+
+    public RandomLoadBalancer(Collection<RegisteredProvider> providers, int millisBetweenPings) {
+        super(providers, millisBetweenPings);
     }
 
     @Override

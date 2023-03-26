@@ -24,7 +24,7 @@ public class HealthPingTest extends TrafficBaseTest {
         RegisteredProvider wrapper1 = factory.registerProvider(provider);
 
         RoundRobinLoadBalancer loadBalancer = new RoundRobinLoadBalancer(List.of(wrapper1),
-                true, 200);
+                200, true);
 
         Future<String> f1 = executorService.submit(loadBalancer::get);
         Thread.sleep(10); // t=10
@@ -50,6 +50,8 @@ public class HealthPingTest extends TrafficBaseTest {
 
         Future<String> f3 = executorService.submit(loadBalancer::get);
         Thread.sleep(10); // t=470;
+        Assertions.assertThrowsExactly(ExecutionException.class, f3::get,
+                "Fails instantly because excluded");
 
         toggledProvider.setAlive(true);
 
