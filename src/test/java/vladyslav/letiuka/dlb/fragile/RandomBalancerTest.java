@@ -9,7 +9,6 @@ import vladyslav.letiuka.dlb.provider.StaticToggledProvider;
 import vladyslav.letiuka.dlb.util.TestLoadBalancerFactory;
 import vladyslav.letiuka.dlb.util.TrafficBaseTest;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,7 @@ public class RandomBalancerTest extends TrafficBaseTest {
         for (Future<String> request : requests) {
             String output = request.get();
             aggregatedOutputs.put(output, aggregatedOutputs.getOrDefault(output, 0) + 1);
-            if(output.equals(lastOutput)) {
+            if (output.equals(lastOutput)) {
                 ++repeats;
             }
             lastOutput = output;
@@ -52,11 +51,11 @@ public class RandomBalancerTest extends TrafficBaseTest {
         Assertions.assertNull(aggregatedOutputs.get("unreachable-output"));
         Assertions.assertEquals(5, aggregatedOutputs.size());
         Assertions.assertTrue(repeats >= 50 && repeats <= 500, "Outputs should not cluster too much," +
-                " but should also repeat occasionally");
-        for(Map.Entry<String, Integer> entry : aggregatedOutputs.entrySet()) {
+                " but should also repeat occasionally (expected around 200 repeats)");
+        for (Map.Entry<String, Integer> entry : aggregatedOutputs.entrySet()) {
             int occurred = entry.getValue();
             Assertions.assertTrue(occurred >= 50 && occurred <= 500,
-                    "Output {"+ entry.getKey() + "} expected to occur roughly 1000 / 5 = 200 times," +
+                    "Output {" + entry.getKey() + "} expected to occur roughly 1000 / 5 = 200 times," +
                             " but actually occurred " + occurred + " times");
         }
     }

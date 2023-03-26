@@ -1,4 +1,4 @@
-package vladyslav.letiuka.dlb.exception;
+package vladyslav.letiuka.dlb.exception.provider;
 
 public class ProviderException extends Exception {
     public ProviderException() {

@@ -1,7 +1,7 @@
 package vladyslav.letiuka.dlb.provider;
 
-import vladyslav.letiuka.dlb.exception.ProviderAtCapacityException;
-import vladyslav.letiuka.dlb.exception.ProviderException;
+import vladyslav.letiuka.dlb.exception.provider.ProviderAtCapacityException;
+import vladyslav.letiuka.dlb.exception.provider.ProviderException;
 
 import java.util.concurrent.Semaphore;
 
@@ -19,10 +19,8 @@ public class LimitedCapacityProviderDecorator implements Provider {
     public String get() throws ProviderException {
         boolean acquired = false;
         try {
-            System.out.println("Trying to acquire semaphore lock...");
             acquired = semaphore.tryAcquire();
             if (!acquired) {
-                System.out.println("Failed to acquire semaphore lock...");
                 throw new ProviderAtCapacityException();
             }
             return delegate.get();

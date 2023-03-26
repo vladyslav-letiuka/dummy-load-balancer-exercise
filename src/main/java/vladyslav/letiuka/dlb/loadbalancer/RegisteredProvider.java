@@ -1,6 +1,7 @@
 package vladyslav.letiuka.dlb.loadbalancer;
 
-import vladyslav.letiuka.dlb.exception.ProviderException;
+import vladyslav.letiuka.dlb.exception.provider.ProviderException;
+import vladyslav.letiuka.dlb.exception.provider.ProviderExcludedException;
 import vladyslav.letiuka.dlb.provider.Provider;
 
 public class RegisteredProvider {
@@ -28,8 +29,8 @@ public class RegisteredProvider {
     }
 
     public String get() throws ProviderException {
-        if (manuallyExcluded || autoExcluded) {
-            throw new ProviderException("Excluded");
+        if (manuallyExcluded || successfulCheckStreak < SUCCESSFUL_CHECK_STREAK_THRESHOLD) {
+            throw new ProviderExcludedException();
         }
         return delegate.get();
     }
@@ -38,17 +39,8 @@ public class RegisteredProvider {
         boolean isHealthy = delegate.check();
 
         successfulCheckStreak = isHealthy ? successfulCheckStreak + 1 : 0;
-        autoUpdateStatus();
 
         return isHealthy;
-    }
-
-    private synchronized void autoUpdateStatus() {
-        if (successfulCheckStreak == 0) {
-            autoExcluded = true;
-        } else if (successfulCheckStreak >= SUCCESSFUL_CHECK_STREAK_THRESHOLD) {
-            autoExcluded = false;
-        }
     }
 
     public String getName() {

@@ -1,4 +1,6 @@
-package vladyslav.letiuka.dlb.exception;
+package vladyslav.letiuka.dlb.exception.balancer;
+
+import vladyslav.letiuka.dlb.exception.balancer.LoadBalancerException;
 
 public class RequestRejectedException extends LoadBalancerException {
     public RequestRejectedException() {

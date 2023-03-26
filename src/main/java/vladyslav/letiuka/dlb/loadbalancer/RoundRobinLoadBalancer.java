@@ -1,8 +1,8 @@
 package vladyslav.letiuka.dlb.loadbalancer;
 
-import vladyslav.letiuka.dlb.exception.LoadBalancerException;
-import vladyslav.letiuka.dlb.exception.ProviderException;
-import vladyslav.letiuka.dlb.exception.RequestRejectedException;
+import vladyslav.letiuka.dlb.exception.balancer.LoadBalancerException;
+import vladyslav.letiuka.dlb.exception.provider.ProviderException;
+import vladyslav.letiuka.dlb.exception.balancer.RequestRejectedException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,18 +15,22 @@ public class RoundRobinLoadBalancer extends ExclusionLoadBalancer {
     // used to avoid too many costly index reset operations
     private static final int RESET_THRESHOLD = Integer.MAX_VALUE / 2;
 
-    private static final int ROUND_ROBIN_RETRIES = 100;
-
     private final AtomicInteger indexCounter;
     private final boolean deterministic;
     private volatile short retries;
 
+    public RoundRobinLoadBalancer(Collection<RegisteredProvider> providers, boolean deterministic) {
+        super(providers);
+        indexCounter = new AtomicInteger(0);
+        this.deterministic = deterministic;
+        retries = 20;
+    }
     public RoundRobinLoadBalancer(Collection<RegisteredProvider> providers) {
         this(providers, false);
     }
 
-    public RoundRobinLoadBalancer(Collection<RegisteredProvider> providers, boolean deterministic) {
-        super(providers);
+    public RoundRobinLoadBalancer(Collection<RegisteredProvider> providers, boolean deterministic, int millisBetweenPings) {
+        super(providers, millisBetweenPings);
         indexCounter = new AtomicInteger(0);
         this.deterministic = deterministic;
         retries = 20;
@@ -92,7 +96,7 @@ public class RoundRobinLoadBalancer extends ExclusionLoadBalancer {
 
     /**
      * Prevents overflow into negative values in order to preserve the correct
-     * {@code %} operand behavior.
+     * {@code %} operator behavior.
      */
     private void resetIndexCounter() {
         indexCounter.updateAndGet(counter -> counter % providers.size());

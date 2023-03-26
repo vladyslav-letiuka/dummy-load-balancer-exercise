@@ -2,8 +2,8 @@ package vladyslav.letiuka.dlb.fragile;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import vladyslav.letiuka.dlb.exception.LoadBalancerException;
-import vladyslav.letiuka.dlb.exception.RequestRejectedException;
+import vladyslav.letiuka.dlb.exception.balancer.LoadBalancerException;
+import vladyslav.letiuka.dlb.exception.balancer.RequestRejectedException;
 import vladyslav.letiuka.dlb.loadbalancer.LoadBalancer;
 import vladyslav.letiuka.dlb.loadbalancer.RegisteredProvider;
 import vladyslav.letiuka.dlb.loadbalancer.RoundRobinLoadBalancer;
@@ -30,9 +30,6 @@ public class CapacityTest extends TrafficBaseTest {
             Assertions.fail();
         } catch (ExecutionException e) {
             Assertions.assertInstanceOf(LoadBalancerException.class, e.getCause());
-        } catch (Throwable e) {
-            e.printStackTrace();
-            Assertions.fail();
         }
     }
 

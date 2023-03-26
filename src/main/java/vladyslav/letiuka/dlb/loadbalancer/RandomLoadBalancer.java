@@ -1,8 +1,8 @@
 package vladyslav.letiuka.dlb.loadbalancer;
 
-import vladyslav.letiuka.dlb.exception.LoadBalancerException;
-import vladyslav.letiuka.dlb.exception.ProviderException;
-import vladyslav.letiuka.dlb.exception.RequestRejectedException;
+import vladyslav.letiuka.dlb.exception.balancer.LoadBalancerException;
+import vladyslav.letiuka.dlb.exception.provider.ProviderException;
+import vladyslav.letiuka.dlb.exception.balancer.RequestRejectedException;
 
 import java.util.ArrayList;
 import java.util.Collection;

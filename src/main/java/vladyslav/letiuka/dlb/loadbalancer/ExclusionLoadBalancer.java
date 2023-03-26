@@ -16,6 +16,10 @@ public abstract class ExclusionLoadBalancer implements LoadBalancer {
     protected final List<RegisteredProvider> providers;
 
     public ExclusionLoadBalancer(Collection<RegisteredProvider> providers) {
+        this(providers, 1000);
+    }
+
+    public ExclusionLoadBalancer(Collection<RegisteredProvider> providers, int pingIntervalMillis) {
         if (providers.size() > MAX_PROVIDERS_SUPPORTED) {
             throw new IllegalArgumentException();
         }
@@ -26,9 +30,8 @@ public abstract class ExclusionLoadBalancer implements LoadBalancer {
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         scheduledExecutorService.scheduleAtFixedRate(
                 () -> healthPingFromWeakRef(weakThis),
-                2000, 2000, TimeUnit.MILLISECONDS);
+                pingIntervalMillis, pingIntervalMillis, TimeUnit.MILLISECONDS);
         cleaner.register(this, scheduledExecutorService::shutdown); // shutdown scheduled pings when GCed
-
     }
 
     public void includeProviders(String name) {

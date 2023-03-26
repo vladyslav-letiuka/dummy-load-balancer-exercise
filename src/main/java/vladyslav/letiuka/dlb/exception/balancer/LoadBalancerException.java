@@ -1,4 +1,4 @@
-package vladyslav.letiuka.dlb.exception;
+package vladyslav.letiuka.dlb.exception.balancer;
 
 public class LoadBalancerException extends Exception {
     public LoadBalancerException() {
