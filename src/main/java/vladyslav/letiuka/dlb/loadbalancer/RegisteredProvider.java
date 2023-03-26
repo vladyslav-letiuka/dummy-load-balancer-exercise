@@ -4,6 +4,8 @@ import vladyslav.letiuka.dlb.exception.provider.ProviderException;
 import vladyslav.letiuka.dlb.exception.provider.ProviderExcludedException;
 import vladyslav.letiuka.dlb.provider.Provider;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class RegisteredProvider {
 
     private static final int SUCCESSFUL_CHECK_STREAK_THRESHOLD = 2;
@@ -11,8 +13,7 @@ public class RegisteredProvider {
     private final Provider delegate;
     private final String name;
     private volatile boolean manuallyExcluded;
-    private volatile boolean autoExcluded;
-    private volatile int successfulCheckStreak;
+    private final AtomicInteger successfulCheckStreak;
 
     public RegisteredProvider(Provider delegate, String name) {
         if (delegate == null) {
@@ -24,23 +25,22 @@ public class RegisteredProvider {
         this.delegate = delegate;
         this.name = name;
         manuallyExcluded = false;
-        autoExcluded = false;
-        successfulCheckStreak = SUCCESSFUL_CHECK_STREAK_THRESHOLD;
+        successfulCheckStreak = new AtomicInteger(SUCCESSFUL_CHECK_STREAK_THRESHOLD);
     }
 
     public String get() throws ProviderException {
-        if (manuallyExcluded || successfulCheckStreak < SUCCESSFUL_CHECK_STREAK_THRESHOLD) {
+        if (manuallyExcluded || successfulCheckStreak.get() < SUCCESSFUL_CHECK_STREAK_THRESHOLD) {
             throw new ProviderExcludedException();
         }
         return delegate.get();
     }
 
-    public synchronized boolean ping() {
-        boolean isHealthy = delegate.check();
-
-        successfulCheckStreak = isHealthy ? successfulCheckStreak + 1 : 0;
-
-        return isHealthy;
+    public void ping() {
+        if (delegate.check()) {
+            successfulCheckStreak.incrementAndGet();
+        } else {
+            successfulCheckStreak.set(0);
+        }
     }
 
     public String getName() {

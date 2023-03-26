@@ -16,7 +16,7 @@ public class ConstantDelayProviderDecorator implements Provider {
         try {
             Thread.sleep(delayMillis);
         } catch (InterruptedException e) {
-            Thread.interrupted();
+            // no-op
         }
 
         return delegate.get();

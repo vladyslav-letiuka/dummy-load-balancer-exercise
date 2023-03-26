@@ -49,7 +49,7 @@ public class RandomBalancerTest extends TrafficBaseTest {
         }
 
         Assertions.assertNull(aggregatedOutputs.get("unreachable-output"));
-        Assertions.assertEquals(5, aggregatedOutputs.size());
+        Assertions.assertEquals(5, aggregatedOutputs.size(), "Should count only alive providers");
         Assertions.assertTrue(repeats >= 50 && repeats <= 500, "Outputs should not cluster too much," +
                 " but should also repeat occasionally (expected around 200 repeats)");
         for (Map.Entry<String, Integer> entry : aggregatedOutputs.entrySet()) {
