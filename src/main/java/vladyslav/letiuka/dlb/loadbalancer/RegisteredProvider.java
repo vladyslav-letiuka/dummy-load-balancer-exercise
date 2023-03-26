@@ -29,7 +29,7 @@ public class RegisteredProvider {
     }
 
     public String get() throws ProviderException {
-        if (manuallyExcluded || successfulCheckStreak.get() < SUCCESSFUL_CHECK_STREAK_THRESHOLD) {
+        if (manuallyExcluded || isAutoExcluded()) {
             throw new ProviderExcludedException();
         }
         return delegate.get();
@@ -53,5 +53,9 @@ public class RegisteredProvider {
 
     public void exclude() {
         manuallyExcluded = true;
+    }
+
+    private boolean isAutoExcluded() {
+        return successfulCheckStreak.get() < SUCCESSFUL_CHECK_STREAK_THRESHOLD;
     }
 }
