@@ -26,7 +26,14 @@ public class LimitedCapacityProviderDecorator implements Provider {
             return delegate.get();
         } finally {
             if (acquired) {
-                semaphore.release();
+                try {
+                    semaphore.release();
+                }
+                catch (Exception e) {
+                    // no-op: exists so that exception in finally block does not override real exception
+
+                    // insert logging of exception stacktrace here
+                }
             }
         }
     }
